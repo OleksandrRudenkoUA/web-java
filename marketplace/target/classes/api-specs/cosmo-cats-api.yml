@@ -3,9 +3,8 @@ info:
   title: Cosmo Cats Intergalactic Marketplace API
   version: 1.0.0
   description: API for managing products in the intergalactic marketplace.
-
 paths:
-  /api/products:
+  /api/v1/products:
     get:
       summary: Get a list of products
       operationId: getProducts
@@ -39,14 +38,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /api/products/{id}:
+                $ref: '#/components/schemas/ProblemDetail'
+  /api/v1/products/{productId}:
     get:
       summary: Get a product by ID
       operationId: getProductById
       parameters:
-        - name: id
+        - name: productId
           in: path
           required: true
           schema:
@@ -64,12 +62,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetail'
     put:
       summary: Update a product by ID
-      operationId: updateProduct
+      operationId: updateProductById
       parameters:
-        - name: id
+        - name: productId
           in: path
           required: true
           schema:
@@ -93,18 +91,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ProblemDetail'
     delete:
       summary: Delete a product by ID
-      operationId: deleteProduct
+      operationId: deleteProductById
       parameters:
-        - name: id
+        - name: productId
           in: path
           required: true
           schema:
@@ -113,13 +111,6 @@ paths:
       responses:
         '204':
           description: Product deleted
-        '404':
-          description: Product not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
 components:
   schemas:
     ProductDTO:
@@ -144,18 +135,22 @@ components:
           type: number
           format: double
           minimum: 0.01
-          description: Price must be greater than 0
+          description: Price must be greater than or equal to 0.01
         categoryId:
           type: integer
           format: int64
-    ErrorResponse:
+    ProblemDetail:
       type: object
       properties:
+        type:
+          type: string
+        title:
+          type: string
         status:
           type: integer
         error:
           type: string
-        message:
+        detail:
           type: string
-        path:
+        instance:
           type: string

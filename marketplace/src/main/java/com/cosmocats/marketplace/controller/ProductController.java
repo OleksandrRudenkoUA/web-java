@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
     private final ProductService service;
 
@@ -19,15 +19,13 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDTO> getProducts() {
-        return service.getProducts();
+    public List<ProductDTO> getAllProducts() {
+        return service.getAllProducts();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
-        return service.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{productId}")
+    public ProductDTO getProductById(@PathVariable Long productId) {
+        return service.getProductById(productId);
     }
 
     @PostMapping
@@ -35,18 +33,14 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createProduct(dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
-        return service.updateProduct(id, dto)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping("/{productId}")
+    public ProductDTO updateProductById(@PathVariable Long productId, @Valid @RequestBody ProductDTO dto) {
+        return service.updateProductById(productId, dto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        if (service.deleteProduct(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProductById(@PathVariable Long productId) {
+        service.deleteProductById(productId);  // Idempotent: завжди 204
+        return ResponseEntity.noContent().build();
     }
 }
