@@ -58,4 +58,9 @@ public class ProductService {
     public void deleteProductById(Long productId) {
         products.removeIf(p -> p.getId().equals(productId));
     }
+
+    public void clear() {
+        products.clear();
+        counter.set(0);
+    }
 }
